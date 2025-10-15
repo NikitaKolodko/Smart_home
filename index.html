@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Умная дача: Технологии автоматизации загородного участка</title>
+    <style>
+        :root {
+            --primary-green: #2d5016;
+            --primary-blue: #1e3a8a;
+            --accent-green: #22c55e;
+            --accent-blue: #3b82f6;
+            --light-green: #dcfce7;
+            --light-blue: #dbeafe;
+            --dark-text: #1f2937;
+            --light-text: #6b7280;
+            --white: #ffffff;
+            --bg-primary: #f8fafc;
+            --shadow-light: rgba(0, 0, 0, 0.1);
+            --shadow-medium: rgba(0, 0, 0, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--light-blue) 0%, var(--light-green) 100%);
+            color: var(--dark-text);
+            overflow-x: hidden;
+        }
+
+        .presentation-container {
+            display: flex;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 300px;
+            background: var(--white);
+            box-shadow: 2px 0 10px var(--shadow-light);
+            overflow-y: auto;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.hidden {
+            transform: translateX(-100%);
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+            color: var(--white);
+        }
+
+        .sidebar-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .toc-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .toc-item {
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .toc-link {
+            display: block;
+            padding: 15px 20px;
+            color: var(--dark-text);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .toc-link:hover {
+            background: var(--light-blue);
+            color: var(--primary-blue);
+        }
+
+        .toc-link.active {
+            background: var(--accent-blue);
+            color: var(--white);
+            font-weight: bold;
+        }
+
+        .slide-number {
+            color: var(--light-text);
+            font-size: 0.8em;
+            margin-right: 10px;
+        }
+
+        /* Main content */
+        .main-content {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slides-container {
+            height: 100%;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.5s ease;
+            background: var(--white);
+            margin-left: 300px;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .slide.prev {
+            transform: translateX(-100%);
+        }
+
+        .slide-header {
+            margin-bottom: 30px;
+        }
+
+        .slide-title {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .slide-number-display {
+            color: var(--light-text);
+            font-size: 1em;
+        }
+
+        .slide-content {
+            flex: 1;
+            display: grid;
+            gap: 30px;
+            grid-template-columns: 2fr 1fr;
+        }
+
+        .content-main {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .content-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .content-item {
+            padding: 15px 0;
+            border-left: 4px solid var(--accent-blue);
+            padding-left: 20px;
+            margin-bottom: 10px;
+            background: var(--light-blue);
+            border-radius: 0 8px 8px 0;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .content-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .stats-card, .info-card {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px var(--shadow-light);
+            border: 1px solid #e5e7eb;
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, var(--light-green), var(--light-blue));
+        }
+
+        .card-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--primary-blue);
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: var(--accent-green);
+        }
+
+        /* Special layouts for specific slides */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px var(--shadow-light);
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .comparison-table th {
+            background: var(--primary-blue);
+            color: var(--white);
+            font-weight: bold;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: var(--light-blue);
+        }
+
+        .stars {
+            color: #fbbf24;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 20px 0 20px 60px;
+            border-left: 3px solid var(--accent-blue);
+            margin-left: 20px;
+        }
+
+        .timeline-item:before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 30px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            border: 3px solid var(--white);
+            box-shadow: 0 0 0 3px var(--accent-blue);
+        }
+
+        .timeline-title {
+            font-weight: bold;
+            color: var(--primary-blue);
+            margin-bottom: 5px;
+        }
+
+        .big-numbers {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .big-number {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-green));
+            color: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px var(--shadow-medium);
+        }
+
+        .big-number-value {
+            font-size: 3em;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .big-number-label {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+
+        /* Controls */
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 10px;
+            z-index: 200;
+        }
+
+        .control-btn {
+            padding: 12px 20px;
+            background: var(--white);
+            border: 2px solid var(--primary-blue);
+            color: var(--primary-blue);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .control-btn:hover {
+            background: var(--primary-blue);
+            color: var(--white);
+        }
+
+        .control-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Progress bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            z-index: 300;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-green));
+            transition: width 0.5s ease;
+        }
+
+        /* Top controls */
+        .top-controls {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            display: flex;
+            gap: 10px;
+            z-index: 200;
+        }
+
+        .toggle-btn {
+            padding: 8px 12px;
+            background: var(--white);
+            border: 1px solid var(--primary-blue);
+            color: var(--primary-blue);
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        /* Notes panel */
+        .notes-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--dark-text);
+            color: var(--white);
+            padding: 20px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            z-index: 150;
+        }
+
+        .notes-panel.visible {
+            transform: translateY(0);
+        }
+
+        .notes-header {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--accent-green);
+        }
+
+        /* Image container */
+        .slide-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px var(--shadow-light);
+            margin: 20px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 250px;
+            }
+
+            .slide {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .slide-content {
+                grid-template-columns: 1fr;
+            }
+
+            .slide-title {
+                font-size: 2em;
+            }
+        }
+
+        /* Fullscreen mode */
+        .fullscreen .slide {
+            margin-left: 0;
+        }
+
+        .fullscreen .sidebar {
+            display: none;
+        }
+
+        /* Intro slide special styling */
+        .slide.intro {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+            color: var(--white);
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .intro .slide-title {
+            font-size: 3.5em;
+            -webkit-text-fill-color: var(--white);
+            margin-bottom: 30px;
+        }
+
+        .intro-subtitle {
+            font-size: 1.5em;
+            opacity: 0.9;
+            margin-bottom: 40px;
+        }
+
+        .intro-author {
+            font-size: 1.2em;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div class="top-controls">
+        <button class="toggle-btn" id="toggleSidebar">Скрыть меню</button>
+        <button class="toggle-btn" id="toggleNotes">Заметки</button>
+        <button class="toggle-btn" id="toggleFullscreen">Полный экран</button>
+    </div>
+
+    <div class="presentation-container" id="presentationContainer">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">Умная дача</div>
+                <div class="sidebar-subtitle">Навигация по слайдам</div>
+            </div>
+            <ul class="toc-list" id="tocList">
+                <!-- TOC will be generated by JavaScript -->
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <div class="slides-container" id="slidesContainer">
+                <!-- Slide 1: Introduction -->
+                <div class="slide intro active" data-slide="1">
+                    <h1 class="slide-title">Умная дача</h1>
+                    <div class="intro-subtitle">Технологии автоматизации загородного участка</div>
+                    <div class="intro-author">Студенческий проект</div>
+                </div>
+
+                <!-- Slide 2: Введение в концепцию -->
+                <div class="slide" data-slide="2">
+                    <div class="slide-header">
+                        <h2 class="slide-title">Введение в концепцию умной дачи</h2>
+                        <div class="slide-number-display">Слайд 2 из 13</div>
+                    </div>
+                    <div class="slide-content">
+                        <div class="content-main">
+                            <ul class="content-list">
+                                <li class="content-item">Умная дача — это гармоничное сочетание природы и современных технологий</li>
+                                <li class="content-item">Главная идея: автоматизация рутинных задач для экономии времени и ресурсов</li>
+                                <li class="content-item">Интеграция цифровых решений с традиционным дачным хозяйством</li>
+                                <li class="content-item">Повышение комфорта, безопасности и эффективности участка</li>
+                            </ul>
+                        </div>
+                        <div class="content-sidebar">
+                            <img src="https://pplx-res.cloudinary.com/image/upload/v1760488890/pplx_project_search_images/b70d226dd750411d692e55a66ca312d50f9ff054.png" alt="Схема умного дома" class="slide-image">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 3: Основные компоненты -->
+                <div class="slide" data-slide="3">
+                    <div class="slide-header">
+                        <h2 class="slide-title">Основные компоненты умной дачи</h2>
+                        <div class="slide-number-display">Слайд 3 из 13</div>
+                    </div>
+                    <div class="slide-content">
+                        <div class="content-main">
+                            <ul class="content-list">
+                                <li class="content-item">Центральный хаб управления (Arduino, Raspberry Pi или готовые решения)</li>
+                                <li class="content-item">Датчики (температуры, влажности, движения, освещенности)</li>
+                                <li class="content-item">Исполнительные устройства (реле, насосы, клапаны)</li>
+                                <li class="content-item">Системы связи (Wi-Fi, Zigbee, LoRa)</li>
+                                <li class="content-item">Мобильные приложения для управления</li>
+                            </ul>
+                        </div>
+                        <div class="content-sidebar">
+                            <img src="https://pplx-res.cloudinary.com/image/upload/v1755856651/pplx_project_search_images/ec4f52a62eb620755f4acba4b95efa39434badff.png" alt="Система автоматизации" class="slide-image">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 4: Автоматизация полива -->
+                <div class="slide" data-slide="4">
+                    <div class="slide-header">
+                        <h2 class="slide-title">Автоматизация полива</h2>
+                        <div class="slide-number-display">Слайд 4 из 13</div>
+                    </div>
+                    <div class="slide-content">
+                        <div class="content-main">
+                            <ul class="content-list">
+                                <li class="content-item">Датчики влажности почвы определяют потребность в поливе</li>
+                                <li class="content-item">Системы капельного орошения с программируемыми таймерами</li>
+                                <li class="content-item">Учет погодных условий через метеодатчики</li>
+                                <li class="content-item">Экономия воды до 30-50% по сравнению с ручным поливом</li>
+                                <li class="content-item">Удаленное управление и мониторинг через приложение</li>
+                            </ul>
+                        </div>
+                        <div class="content-sidebar">
+                            <div class="stats-card">
+                                <div class="card-title">Ключевые показатели</div>
+                                <div class="stat-item">
+                                    <span>Экономия воды:</span>
+                                    <span class="stat-value">30-50%</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span>Экономия времени:</span>
+                                    <span class="stat-value">до 5 ч/нед</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span>Стоимость:</span>
+                                    <span class="stat-value">5-25 тыс.₽</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 5: Умная теплица -->
+                <div class="slide" data-slide="5">
+                    <div class="slide-header">
+                        <h2 class="slide-title">Умная теплица</h2>
+                        <div class="slide-number-display">Слайд 5 из 13</div>
+                    </div>
+                    <div class="slide-content">
+                        <div class="content-main">
+                            <ul class="content-list">
+                                <li class="content-item">Автоматический контроль температуры и влажности</li>
+                                <li class="content-item">Система проветривания с сервоприводами</li>
+                                <li class="content-item">Управление освещением (фитолампы)</li>
+                                <li class="content-item">Контроль уровня CO2 для улучшения роста растений</li>
+                                <li class="content-item">Увеличение урожайности на 20-40%</li>
+                            </ul>
+                        </div>
+                        <div class="content-sidebar">
+                            <img src="https://pplx-res.cloudinary.com/image/upload/v1760488891/pplx_project_search_images/122c71919d0b0ce229ff673ac19f33b4012e7a6e.png" alt="Умная теплица" class="slide-image">
+                            <div class="stats-card">
+                                <div class="card-title">Эффективность</div>
+                                <div class="stat-item">
+                                    <span>Рост урожайности:</span>
+                                    <span class="stat-value">20-40%</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span>Экономия энергии:</span>
+                                    <span class="stat-value">до 25%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 6: Системы безопасности -->
+                <div class="slide" data-slide="6">
+                    <div class="slide-header">
+                        <h2 class="slide-title">Системы безопасности</h2>
+                        <div class="slide-number-display">Слайд 6 из 13</div>
+                    </div>
+                    <div class="slide-content">
+                        <div class="content-main">
+                            <ul class="content-list">
+                                <li class="content-item">Видеонаблюдение с удаленным доступом</li>
+                                <li class="content-item">Датчики движения и проникновения</li>
+                                <li class="content-item">Сигнализация с уведомлениями на смартфон</li>
+                                <li class="content-item">Контроль доступа (умные замки, RFID)</li>
+                                <li class="content-item">Датчики дыма и протечек воды</li>
+                            </ul>
+                        </div>
+                        <div class="content-sidebar">
+                            <div class="stats-card">
+                                <div class="card-title">Характеристики</div>
+                                <div class="stat-item">
+                                    <span>Время реакции:</span>
+                                    <span class="stat-value">мгновенно</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span>Охват:</span>
+                                    <span class="stat-value">360°</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span>Стоимость:</span>
+                                    <span class="stat-value">10-50 тыс.₽</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 7: Энергоэффективность -->
+                <div class="slide" data-slide="7">
+                    <div class="slide-header">
+                        <h2 class="slide-title">Энергоэффективность и экология</h2>
+                        <div class="slide-number-display">Слайд 7 из 13</div>
+                    </div>
+                    <div class="slide-content">
+                        <div class="content-main">
+                            <ul class="content-list">
+                                <li class="content-item">Солнечные панели для автономного питания</li>
+                                <li class="content-item">Умное управление освещением</li>
+                                <li class="content-item">Мониторинг потребления электроэнергии</li>
+                                <li class="content-item">Накопители энергии (аккумуляторы)</li>
+                                <li class="content-item">Снижение энергопотребления на 30-60%</li>
+                            </ul>
+                        </div>
+                        <div class="content-sidebar">
+                            <div class="stats-card">
+                                <div class="card-title">Экономические показатели</div>
+                                <div class="stat-item">
+                                    <span>Снижение потребления:</span>
+                                    <span class="stat-value">30-60%</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span>Окупаемость:</span>
+                                    <span class="stat-value">3-7 лет</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span>Инвестиции:</span>
+                                    <span class="stat-value">50-200 тыс.₽</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 8: Практические примеры -->
+                <div class="slide" data-slide="8">
+                    <div class="slide-header">
+                        <h2 class="slide-title">Практические примеры реализации</h2>
+                        <div class="slide-number-display">Слайд 8 из 13</div>
+                    </div>
+                    <div class="slide-content">
+                        <div class="content-main">
+                            <ul class="content-list">
+                                <li class="content-item">Проект 'Умная дача' от Hi-Lab.ru на Arduino Mega 2560</li>
+                                <li class="content-item">Система автополива 'АкваДуся' с LCD-экраном</li>
+                                <li class="content-item">Комплекты от Xiaomi Mi Smart Home Hub</li>
+                                <li class="content-item">Готовые решения Ajax и Rubetek</li>
+                                <li class="content-item">DIY-проекты на основе Arduino и Raspberry Pi</li>
+                            </ul>
+                        </div>
+                        <div class="content-sidebar">
+                            <img src="https://pplx-res.cloudinary.com/image/upload/v1760488890/pplx_project_search_images/24eac5e64fa9d7ca83274ab1ef0bc68c7d3e57b5.png" alt="Arduino проект" class="slide-image">
+                            <div class="info-card">
+                                <div class="card-title">Примеры стоимости</div>
+                                <div class="stat-item">
+                                    <span>Arduino проекты:</span>
+                                    <span class="stat-value">5-15 тыс.₽</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span>Готовые комплекты:</span>
+                                    <span class="stat-value">20-100 тыс.₽</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 9: Сравнение решений -->
+                <div class="slide" data-slide="9">
+                    <div class="slide-header">
+                        <h2 class="slide-title">Сравнение решений</h2>
+                        <div class="slide-number-display">Слайд 9 из 13</div>
+                    </div>
+                    <div class="slide-content" style="grid-template-columns: 1fr;">
+                        <div class="content-main">
+                            <ul class="content-list">
+                                <li class="content-item">DIY на Arduino: низкая стоимость, высокая кастомизация</li>
+                                <li class="content-item">Готовые комплекты: простота установки, ограниченная гибкость</li>
+                                <li class="content-item">Профессиональные системы: максимальный функционал, высокая цена</li>
+                            </ul>
+                            
+                            <table class="comparison-table">
+                                <thead>
+                                    <tr>
+                                        <th>Решение</th>
+                                        <th>Стоимость</th>
+                                        <th>Простота установки</th>
+                                        <th>Функциональность</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Arduino DIY</strong></td>
+                                        <td><span class="stars">★</span></td>
+                                        <td><span class="stars">★★</span></td>
+                                        <td><span class="stars">★★★★★</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Готовые комплекты</strong></td>
+                                        <td><span class="stars">★★★</span></td>
+                                        <td><span class="stars">★★★★★</span></td>
+                                        <td><span class="stars">★★★</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Профессиональные</strong></td>
+                                        <td><span class="stars">★★★★★</span></td>
+                                        <td><span class="stars">★★★★</span></td>
+                                        <td><span class="stars">★★★★★</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 10: Этапы внедрения -->
+                <div class="slide" data-slide="10">
+                    <div class="slide-header">
+                        <h2 class="slide-title">Этапы внедрения умной дачи</h2>
+                        <div class="slide-number-display">Слайд 10 из 13</div>
+                    </div>
+                    <div class="slide-content" style="grid-template-columns: 1fr;">
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-title">1. Анализ потребностей и планирование</div>
+                                <div>Определение целей, бюджета и приоритетных систем</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-title">2. Выбор центральной системы управления</div>
+                                <div>Arduino, Raspberry Pi или готовые хабы</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-title">3. Установка базовой инфраструктуры</div>
+                                <div>Wi-Fi покрытие, электропитание, кабельные трассы</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-title">4. Поэтапное добавление систем</div>
+                                <div>Полив → освещение → безопасность → климат-контроль</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-title">5. Тестирование и настройка</div>
+                                <div>Отладка автоматических сценариев и уведомлений</div>
+                            </div>
+                        </div>
+                        <div style="text-align: center; margin-top: 30px;">
+                            <div class="big-number">
+                                <span class="big-number-value">1-6</span>
+                                <span class="big-number-label">месяцев на внедрение</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 11: Экономическая эффективность -->
+                <div class="slide" data-slide="11">
+                    <div class="slide-header">
+                        <h2 class="slide-title">Экономическая эффективность</h2>
+                        <div class="slide-number-display">Слайд 11 из 13</div>
+                    </div>
+                    <div class="slide-content" style="grid-template-columns: 1fr;">
+                        <div class="content-main">
+                            <ul class="content-list">
+                                <li class="content-item">Экономия воды: 30-50% от текущих расходов</li>
+                                <li class="content-item">Снижение энергопотребления: 30-60%</li>
+                                <li class="content-item">Увеличение урожайности: 20-40%</li>
+                                <li class="content-item">Экономия времени: до 10 часов в неделю</li>
+                            </ul>
+                            
+                            <div class="big-numbers">
+                                <div class="big-number">
+                                    <span class="big-number-value">50-150</span>
+                                    <span class="big-number-label">тыс. ₽ инвестиции</span>
+                                </div>
+                                <div class="big-number">
+                                    <span class="big-number-value">15-40</span>
+                                    <span class="big-number-label">тыс. ₽/год экономия</span>
+                                </div>
+                                <div class="big-number">
+                                    <span class="big-number-value">2-5</span>
+                                    <span class="big-number-label">лет окупаемость</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 12: Вызовы и ограничения -->
+                <div class="slide" data-slide="12">
+                    <div class="slide-header">
+                        <h2 class="slide-title">Вызовы и ограничения</h2>
+                        <div class="slide-number-display">Слайд 12 из 13</div>
+                    </div>
+                    <div class="slide-content">
+                        <div class="content-main">
+                            <ul class="content-list">
+                                <li class="content-item">Зависимость от электропитания и интернета</li>
+                                <li class="content-item">Необходимость регулярного обслуживания</li>
+                                <li class="content-item">Высокие первоначальные затраты</li>
+                                <li class="content-item">Потребность в технических знаниях</li>
+                                <li class="content-item">Киберзащита и конфиденциальность данных</li>
+                            </ul>
+                        </div>
+                        <div class="content-sidebar">
+                            <div class="info-card">
+                                <div class="card-title">Решения проблем</div>
+                                <div style="margin-bottom: 15px;">
+                                    <strong>Отключение электричества</strong><br>
+                                    <small>→ Резервные источники питания</small>
+                                </div>
+                                <div style="margin-bottom: 15px;">
+                                    <strong>Поломка датчиков</strong><br>
+                                    <small>→ Дублирование критических систем</small>
+                                </div>
+                                <div>
+                                    <strong>Кибератаки</strong><br>
+                                    <small>→ Обновление ПО, VPN-защита</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 13: Будущее умных дач -->
+                <div class="slide" data-slide="13">
+                    <div class="slide-header">
+                        <h2 class="slide-title">Будущее умных дач</h2>
+                        <div class="slide-number-display">Слайд 13 из 13</div>
+                    </div>
+                    <div class="slide-content">
+                        <div class="content-main">
+                            <ul class="content-list">
+                                <li class="content-item">Интеграция с искусственным интеллектом</li>
+                                <li class="content-item">Развитие технологий IoT и 5G</li>
+                                <li class="content-item">Использование больших данных для оптимизации</li>
+                                <li class="content-item">Роботизация сельскохозяйственных процессов</li>
+                                <li class="content-item">Интеграция с умными городами</li>
+                            </ul>
+                        </div>
+                        <div class="content-sidebar">
+                            <div class="info-card">
+                                <div class="card-title">Тренды будущего</div>
+                                <div style="margin-bottom: 10px;">🤖 AI-оптимизация полива</div>
+                                <div style="margin-bottom: 10px;">🚁 Дроны для мониторинга</div>
+                                <div style="margin-bottom: 10px;">🌱 Роботы-садовники</div>
+                                <div>🔗 Blockchain для урожая</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 14: Заключение -->
+                <div class="slide" data-slide="14">
+                    <div class="slide-header">
+                        <h2 class="slide-title">Заключение</h2>
+                        <div class="slide-number-display">Слайд 14 из 13</div>
+                    </div>
+                    <div class="slide-content">
+                        <div class="content-main">
+                            <ul class="content-list">
+                                <li class="content-item">Умная дача — это не роскошь, а практическая необходимость</li>
+                                <li class="content-item">Технологии помогают экономить время, ресурсы и увеличивать урожай</li>
+                                <li class="content-item">Доступны решения для любого бюджета и уровня навыков</li>
+                                <li class="content-item">Поэтапное внедрение позволяет минимизировать риски</li>
+                                <li class="content-item">Инвестиции окупаются за 2-5 лет</li>
+                            </ul>
+                            
+                            <div style="text-align: center; margin-top: 40px; padding: 30px; background: linear-gradient(135deg, var(--accent-blue), var(--accent-green)); color: white; border-radius: 15px; font-size: 1.2em; font-weight: bold;">
+                                💡 Начните с малого — установите систему автополива или датчики безопасности
+                            </div>
+                        </div>
+                        <div class="content-sidebar">
+                            <div class="info-card">
+                                <div class="card-title">Источники</div>
+                                <div style="font-size: 0.9em; line-height: 1.6;">
+                                    • RBC Trends<br>
+                                    • Яндекс.Недвижимость<br>
+                                    • Hi-Lab.ru<br>
+                                    • Arduino.ru<br>
+                                    • Retail.ru
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="controls">
+        <button class="control-btn" id="prevBtn">← Предыдущий</button>
+        <button class="control-btn" id="nextBtn">Следующий →</button>
+    </div>
+
+    <div class="notes-panel" id="notesPanel">
+        <div class="notes-header">Заметки для докладчика:</div>
+        <div class="notes-content" id="notesContent">
+            <!-- Notes will be updated by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        class SmartDachaPresentation {
+            constructor() {
+                this.currentSlide = 1;
+                this.totalSlides = 14;
+                this.slides = document.querySelectorAll('.slide');
+                this.notesData = {
+                    1: "Введение в презентацию. Подчеркнуть актуальность темы.",
+                    2: "Объяснить базовую концепцию умной дачи. Акцент на практичности.",
+                    3: "Показать схему компонентов системы. Объяснить взаимодействие.",
+                    4: "Привести конкретные цифры экономии воды и времени.",
+                    5: "Объяснить влияние автоматизации на урожайность.",
+                    6: "Подчеркнуть важность безопасности дачи в отсутствие хозяев.",
+                    7: "Показать экологические и экономические преимущества.",
+                    8: "Привести конкретные кейсы и примеры реализации.",
+                    9: "Помочь в выборе подходящего решения по бюджету.",
+                    10: "Подчеркнуть важность поэтапного подхода к внедрению.",
+                    11: "Привести расчеты экономической эффективности с примерами.",
+                    12: "Обсудить возможные проблемы и пути их решения.",
+                    13: "Показать перспективы развития технологий.",
+                    14: "Подвести итоги и мотивировать аудиторию к действию."
+                };
+                
+                this.initEventListeners();
+                this.generateTOC();
+                this.updateProgress();
+                this.updateNotes();
+            }
+
+            initEventListeners() {
+                // Navigation buttons
+                document.getElementById('prevBtn').addEventListener('click', () => this.previousSlide());
+                document.getElementById('nextBtn').addEventListener('click', () => this.nextSlide());
+                
+                // Keyboard navigation
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowLeft') this.previousSlide();
+                    if (e.key === 'ArrowRight') this.nextSlide();
+                    if (e.key === 'Escape') this.exitFullscreen();
+                });
+                
+                // Toggle controls
+                document.getElementById('toggleSidebar').addEventListener('click', () => this.toggleSidebar());
+                document.getElementById('toggleNotes').addEventListener('click', () => this.toggleNotes());
+                document.getElementById('toggleFullscreen').addEventListener('click', () => this.toggleFullscreen());
+            }
+
+            generateTOC() {
+                const tocList = document.getElementById('tocList');
+                const slideData = [
+                    "Титульный слайд",
+                    "Введение в концепцию", 
+                    "Основные компоненты",
+                    "Автоматизация полива",
+                    "Умная теплица",
+                    "Системы безопасности",
+                    "Энергоэффективность",
+                    "Практические примеры",
+                    "Сравнение решений",
+                    "Этапы внедрения",
+                    "Экономическая эффективность",
+                    "Вызовы и ограничения",
+                    "Будущее умных дач",
+                    "Заключение"
+                ];
+                
+                slideData.forEach((title, index) => {
+                    const li = document.createElement('li');
+                    li.className = 'toc-item';
+                    
+                    const link = document.createElement('a');
+                    link.className = 'toc-link';
+                    if (index + 1 === this.currentSlide) link.classList.add('active');
+                    link.href = '#';
+                    link.innerHTML = `<span class="slide-number">${index + 1}</span>${title}`;
+                    
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        this.goToSlide(index + 1);
+                    });
+                    
+                    li.appendChild(link);
+                    tocList.appendChild(li);
+                });
+            }
+
+            goToSlide(slideNumber) {
+                if (slideNumber < 1 || slideNumber > this.totalSlides) return;
+                
+                // Remove active class from current slide
+                this.slides.forEach(slide => {
+                    slide.classList.remove('active', 'prev');
+                });
+                
+                // Remove active class from TOC
+                document.querySelectorAll('.toc-link').forEach(link => {
+                    link.classList.remove('active');
+                });
+                
+                // Add active class to new slide
+                const targetSlide = document.querySelector(`[data-slide="${slideNumber}"]`);
+                if (targetSlide) {
+                    targetSlide.classList.add('active');
+                }
+                
+                // Update TOC
+                const tocLinks = document.querySelectorAll('.toc-link');
+                if (tocLinks[slideNumber - 1]) {
+                    tocLinks[slideNumber - 1].classList.add('active');
+                }
+                
+                this.currentSlide = slideNumber;
+                this.updateProgress();
+                this.updateNotes();
+                this.updateNavigationButtons();
+            }
+
+            nextSlide() {
+                if (this.currentSlide < this.totalSlides) {
+                    this.goToSlide(this.currentSlide + 1);
+                }
+            }
+
+            previousSlide() {
+                if (this.currentSlide > 1) {
+                    this.goToSlide(this.currentSlide - 1);
+                }
+            }
+
+            updateProgress() {
+                const progress = (this.currentSlide / this.totalSlides) * 100;
+                document.getElementById('progressFill').style.width = progress + '%';
+            }
+
+            updateNotes() {
+                const notesContent = document.getElementById('notesContent');
+                notesContent.textContent = this.notesData[this.currentSlide] || 'Заметки для этого слайда отсутствуют.';
+            }
+
+            updateNavigationButtons() {
+                const prevBtn = document.getElementById('prevBtn');
+                const nextBtn = document.getElementById('nextBtn');
+                
+                prevBtn.disabled = this.currentSlide === 1;
+                nextBtn.disabled = this.currentSlide === this.totalSlides;
+            }
+
+            toggleSidebar() {
+                const sidebar = document.getElementById('sidebar');
+                const toggleBtn = document.getElementById('toggleSidebar');
+                
+                sidebar.classList.toggle('hidden');
+                toggleBtn.textContent = sidebar.classList.contains('hidden') ? 'Показать меню' : 'Скрыть меню';
+            }
+
+            toggleNotes() {
+                const notesPanel = document.getElementById('notesPanel');
+                notesPanel.classList.toggle('visible');
+            }
+
+            toggleFullscreen() {
+                const container = document.getElementById('presentationContainer');
+                const toggleBtn = document.getElementById('toggleFullscreen');
+                
+                if (!document.fullscreenElement) {
+                    container.requestFullscreen().then(() => {
+                        container.classList.add('fullscreen');
+                        toggleBtn.textContent = 'Выйти из полного экрана';
+                    });
+                } else {
+                    document.exitFullscreen().then(() => {
+                        container.classList.remove('fullscreen');
+                        toggleBtn.textContent = 'Полный экран';
+                    });
+                }
+            }
+
+            exitFullscreen() {
+                if (document.fullscreenElement) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        // Initialize presentation
+        document.addEventListener('DOMContentLoaded', () => {
+            new SmartDachaPresentation();
+        });
+    </script>
+</body>
+</html>
